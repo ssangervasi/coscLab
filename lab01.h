@@ -1,2 +1,3 @@
+
 void rmwhite(char* spacey);
 

@@ -1,12 +1,13 @@
-#include <lab01.h>
+#include <stdio.h>
+#include <string.h>
 
-void rmwhite(char* spacey)
+void removewhitespace(char* spacey)
 {
 	if(spacey==NULL){
-		return NULL;
+		return;
 	}
 	int slen = strlen(spacey);
-	char *filler[slen];
+	char filler[slen];
 	int i = 0;
 	int j = 0;
 	for(; i<slen; i++){
@@ -15,36 +16,26 @@ void rmwhite(char* spacey)
 			j++;
 		}
 	}
+	i=0;
+	spacey[j]='\0';
+	for(; i<j; i++){
+		spacey[i]=filler[i];
+	}
+
+	return;
 }
 
-
-/*
-void rmwhite(char* spacey)
-{
-	if(spacey==NULL){
+char* pascalstr(char* cstr)
+{	
+	int clen = strlen(cstr);
+	if(clen>255){
 		return NULL;
 	}
-	int slen = strlen(spacey);
-	int fillfrom = -1;
-	int fillto = -1;
-	int starting = 1;
-	char *fillwith[slen];
-	int i=0;
-	int j=0;
-	for(; inti<slen; i++){
-		if(spacey[i]==' ' || spacey[i]=='\n' || spacey[i]=='\t'){
-			fillfrom=fillto=-1;
-			starting = 0;
-					
-			
-		}
-		else if(starting == 0){
-			if(fillfrom==-1){
-				fillfrom = i;
-		}
-		
-			
-		
+	unsigned char plen = clen;
+	char pstr[clen=1];
+	plen[0]=clen;
+	int i=1;
+	for(; i<=plen; i++){
+		pstr[i]=cstr[i-1];
 	}
-	
-} */
+}

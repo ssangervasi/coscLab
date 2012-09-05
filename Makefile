@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS- -g -Wall
+CFLAGS= -g -Wall
 OBJS = lab01.o main.o
 DEPS = lab01.h
 TARGET = lab01
