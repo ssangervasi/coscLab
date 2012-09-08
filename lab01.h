@@ -1,3 +1,5 @@
 
 void rmwhite(char* spacey);
-
+char* c2pascal(char* cstr);
+char* pascal2c(char* pstr);
+char* tokenify(char* str);
