@@ -102,12 +102,13 @@ char** tokenify(char* str)
 	
 	char* begin = NULL;
 	int gotill = -1;
+	int fullword = 0;
 	int upto = 0;
 
 	totalarry[0] = buffarray[0] = buffaray[buffsize] = NULL;
 	for(; i<slen; i++){
 		if(isspace(str[i]) != 0){
-			if(gotill != -1){
+			if(gotill == -1){
 				begin = str[i];
 				gotill++;
 			}
@@ -116,10 +117,14 @@ char** tokenify(char* str)
 			}			
 		}
 		else{
-			if(begin != NULL){
+			if(-1<=gotill && begin != NULL){
+				fullword = 1;
+			}
+			
+			if(begin != NULL && 1 == fullword){
 				if(buffsize==inbuff){
 					totalsize += (buffsize-1);
-					holder = arrConcat(totalarray, buff, totalsize);
+					holder = arrConcat(totalarray, buffarray, totalsize);
 					free(totalarray);
 					totalarray=holder;
 					inbuff = 0;	
@@ -137,12 +142,15 @@ char** tokenify(char* str)
 					gotill=-1;
 					begin = NULL;
 					upto = 0; 
+					fullword = 0;
 				}
 			}
 			
 		}
 	}
 
+	free(buffarray);
+	return totalarray
 }
 
 
