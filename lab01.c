@@ -71,13 +71,15 @@ char** arrConcat(char** addto, char** addition, int* totalsize)
 	while(addto[i] != NULL){
 		memsize = strlen(addto[i])*sizeof(char);
 		newarr[i] = malloc(memsize);
-		newarr[i] = strdup(addto[i]);
+		//newarr[i] = strdup(addto[i]);
+		newarr[i] = memcpy(newarr[i], addto[i], memsize);
 		i++; 
 	}		
 	while(addition[j] !=NULL){
 		memsize = strlen(addition[j])*sizeof(char);
 		newarr[i] = malloc(memsize);
-		newarr[i] = strdup(addition[j]);
+		//newarr[i] = strdup(addition[j]);
+		newarr[i] = memcpy(newarr[i], addition[j], memsize);
 		i++;
 		j++;
 	}
