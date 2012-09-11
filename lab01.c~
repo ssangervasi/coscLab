@@ -3,7 +3,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 
-char** arrConcat(char** addto, char** addition, int* totalsize);
+char** arrConcat(char** addto, char** addition, int* tosize, int* addsize);
 
 void removewhitespace(char* spacey)
 {
@@ -15,7 +15,7 @@ void removewhitespace(char* spacey)
 	int i = 0;
 	int j = 0;
 	for(; i<slen; i++){
-		if(spacey[i]!=' ' && spacey[i]!='\n' & spacey[i]!='\t'){
+		if(spacey[i]!=' ' && spacey[i]!='\n' && spacey[i]!='\t'){
 			filler[j]=spacey[i];
 			j++;
 		}
@@ -62,30 +62,30 @@ char* pascal2c(char* pstr)
 /* 	Array Concatonation is a helper function I wrote that is used in "tokenify"  
 	to make the combination of the total array and a buffer array (of strings).
 */
-char** arrConcat(char** addto, char** addition, int* totalsize)
+char** arrConcat(char** addto, char** addition, int* tosize, int* addsize)
 {
 	int i=0;
 	int j=0;
-	int memsize = 0;
-	/*int maxstr=0;
-	while(addto[i]!=NULL || addition[i]!=NULL){
-		if(addto[i]!=NULL && strlen(addto[i])>maxstr)
-	}*/
-	char** newarr = malloc((*totalsize+1)*sizeof(char*));
-	while(addto[i] != NULL){
+	int totsize = (*tosize)+(*addsize)+1;
+	int memsize;
+	char** newarr = malloc(totsize*sizeof(char*));
+	while(i<*tosize){
 		memsize = strlen(addto[i])*sizeof(char);
 		newarr[i] = malloc(memsize);
-		memcpy(newarr[i], addto[i], memsize);
+		newarr[i] = strdup(addto[i]);
+		free(addto[i]);
 		i++; 
-	}		
-	while(addition[j]!=NULL){
+	}	
+		
+	while(j<*addsize){
 		memsize = strlen(addition[j])*sizeof(char);
 		newarr[i] = malloc(memsize);
-		memcpy(newarr[i], addition[j], memsize);
+		newarr[i] = strdup(addition[j]);
+		free(addition[j]);
 		i++;
 		j++;
 	}
-	newarr[i+1] = NULL;
+	newarr[totsize] = NULL;
 	return newarr; 
 }
 
@@ -93,24 +93,24 @@ char** tokenify(char* str)
 {
 	int i = 0;
 	const int slen = strlen(str);
-	const int buffsize = 6; // I'm using this variable so that you can set how big the buffer is during this process (note: this includes up to the NULL element).
-	int totalsize = 0; //Refers to the number of places in totalarray that are not the concluding NULL element.
+	int buffsize =77; // I'm using this variable so that you can set how big the buffer is during this process not including the concluding NULL element.
+	int totalsize = 0; //Refers to the number of places in totalarray that are not the concluding NULL element. 
 	
 	char** totalarray = malloc(sizeof(char*));
-	char** holder;
-	char** buffarray = malloc(sizeof(char*)*buffsize);
+	char** buffarray = malloc(sizeof(char*)*(buffsize+1));
 	int inbuff = 0;
-	char* tobuff = NULL;
 	
 	char* begin = NULL;
 	int gotill = -1;
 	int fullword = 0;
 	int upto = 0;
 
-	totalarray[0] = buffarray[0] = buffarray[buffsize] = NULL;
-	for(; i<slen; i++){
-		if(isspace(str[i]) != 0){
-			if(gotill == -1){
+	totalarray[0] = NULL;
+	buffarray[buffsize+1] = NULL;
+
+	for(; i<=slen; i++){
+		if(!isspace(str[i])){
+			if(begin == NULL){
 				begin = (str+i);
 				gotill++;
 			}
@@ -119,39 +119,41 @@ char** tokenify(char* str)
 			}			
 		}
 		else{
-			if(-1<=gotill && begin != NULL){
+			if(begin != NULL){
+				gotill++;
 				fullword = 1;
 			}
 			
 			if(begin != NULL && 1 == fullword){
-				if(buffsize==inbuff){
-					totalsize += (buffsize-1);
-					holder = arrConcat(totalarray, buffarray, &totalsize);
-					free(totalarray);
-					totalarray=holder;
-					inbuff = 0;	
+				
+				buffarray[inbuff] = malloc(sizeof(char)*(gotill));
+				for(; upto<gotill; upto++){
+					(buffarray[inbuff])[upto]= *(begin+upto);
 				}
-				if(inbuff<buffsize){ //I realize this condition isn't actually necessary because this step happens every time regardless, I might edit this out later.
-					buffarray[inbuff] = malloc(sizeof(char)*(gotill+1));
-					tobuff = malloc(sizeof(char)*(gotill+1)); /*I guess I could save some memory space by exluding tobuff completely instead of copying it into the buffer after, but I already typed it up this way...*/
-					for(; upto<gotill; upto++){
-						tobuff[upto] = *(begin+upto);
-					}
-					tobuff[upto] = '\0';
-					memcpy(buffarray[inbuff], tobuff, sizeof(char)*(upto));
-					free(tobuff);
-					inbuff++;
-					gotill=-1;
-					begin = NULL;
-					upto = 0; 
-					fullword = 0;
+				(buffarray[inbuff])[upto] = '\0';
+				
+				inbuff++;
+				gotill=-1;
+				begin = NULL;
+				upto = 0; 
+				fullword = 0;	
+			
+				if(buffsize==inbuff){					
+					totalarray = arrConcat(totalarray, buffarray, &totalsize, &buffsize);
+					totalsize += (buffsize);
+					inbuff = 0;						
+					free(buffarray);	
+					buffarray = malloc(sizeof(char*)*(buffsize));
+					
 				}
 			}
 			
 		}
 	}
-
-	free(buffarray);
+	if(inbuff>0){		
+		totalarray = arrConcat(totalarray, buffarray, &totalsize, &inbuff);		
+	}
+	free(buffarray); //I hope I have taken care of all memory leaks...
 	return totalarray;
 }
 
