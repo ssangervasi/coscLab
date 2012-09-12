@@ -1,0 +1,99 @@
+Response:
+1)
+	 The fork01 program returns two values -- one for the parent and one for the child. The parent returns first with "Who are you? 150", then below that is the return of the child, "Or am I? 50".
+
+2)
+	Modified fork01.c that causes a nice freeze. I call it  "forkup".
+/*
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int main(int argc, char **argv) {
+
+    char *s = "I am a process!";
+    int value = 100;
+	
+	while(1){
+    		pid_t pid = fork();
+    		if (pid == 0) {
+		  fork();
+      		  s = "Or am I?";
+       		 value -= 50;
+   		 } else {
+		  fork();
+      		  s = "Who are you?";
+       		 value += 50;
+   		 }
+	}
+    printf("%s %d\n", s, value);
+    return 0;
+}
+*/
+
+3)
+	My modification of fork03.c that does the parent waiting and gets the value back from the child process execution.	
+/*
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/wait.h>
+#include <sys/types.h>
+#include <errno.h>
+
+int main(int argc, char **argv)
+{
+	char *cmd[] = { "/bin/ps", "-ef", NULL };
+	
+	pid_t findchild = fork();
+	if(findchild == 0){
+		if (execv(cmd[0], cmd) < 0) {
+			fprintf(stderr, "execv failed: %s\n", strerror(errno));
+		}
+	}
+	else{
+		int* whatever;
+		waitpid(findchild, whatever, 0);
+		printf("No worries, I'm the parent. %d\n", *whatever);
+	}
+	return 0;
+}
+*/
+
+4)
+...
+/* need a function prototype before any of this */
+
+char *remove_whitespace(char *s) {
+    char buffer[strlen(s) + 1]; 
+/* Don't we actually need a malloc()? Otherwise it's not able to be returned... This will later require a free()*/
+    int i = 0, j = 0;
+    for ( ; i < strlen(s); i += 1) {
+        if (!isspace(s[i])) {
+            buffer[j] = s[i]; /*I don't know why but this might not work*/
+            j += 1;
+        }
+    }
+    buffer[j] = '\0';
+    printf("%s\n", buffer);
+    return buffer;
+}
+
+int main(int argc, char **argv) {
+    char *s = strdup("  the \tinternet\t\nis a series of tubes  ");
+    char *newstr = remove_whitespace(s);
+    printf("%s\n", newstr);
+    return 0;
+}
+
+5)
+/*
+void insert(char *name,  struct node **head) {
+	struct node *new = malloc(sizeof(struct node));
+	(*newnode).name = strdup(name);	//same as "newnode -> name" 
+	(*newnode).next = *head;
+	*head = newnode;
+	return;
+}
+*/
+
