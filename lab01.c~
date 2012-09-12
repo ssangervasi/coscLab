@@ -93,7 +93,7 @@ char** tokenify(char* str)
 {
 	int i = 0;
 	const int slen = strlen(str);
-	int buffsize =7; // I'm using this variable so that you can set how big the buffer is during this process not including the concluding NULL element.
+	int buffsize =77; // I'm using this variable so that you can set how big the buffer is during this process not including the concluding NULL element.
 	int totalsize = 0; //Refers to the number of places in totalarray that are not the concluding NULL element. 
 	
 	char** totalarray = malloc(sizeof(char*));

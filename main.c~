@@ -7,7 +7,7 @@
 int main(int argc, char **argv)
 {
     // strdup makes a newly allocated (malloced) copy of a string
-    char *orig = strdup("  \tthe internet is a series of tubes and did you know I'm a     yes I\ndid but \t did you KNOW I'm slim \t shady??  \n");
+    char *orig = strdup("  \tthe internet is a series of tubesand did you know I'm a     yes I\ndid but \t did you KNOW I'm slim \t shady??  \n");
     char *copy = strdup(orig);
  
     /* ********************************** */

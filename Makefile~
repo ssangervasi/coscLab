@@ -11,6 +11,6 @@ clean:
 	rm -f $(OBJS) $(TARGET)
 
 %.o: %.c $(DEPS)
-	$(CC) -c $< $(CFLAGS)
+	$(CC) -c $< $(CLFLAGS)
 
 
