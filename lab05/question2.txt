@@ -1,0 +1,8 @@
+
+Output:
+"CHILD: before 0
+ CHILD: after 5
+ PARENT: before 0
+ PARENT: after 0"
+
+
