@@ -1,0 +1,37 @@
+Sebastian Sangervasi
+October something something
+
+1.
+	a) 2^5 for virtual page number, and 2^10 for page offset values  = 15 bits for logical addr
+	b) 2^14 words in physical memory, so you need a phys addr of 14 bits
+
+2.
+	a) (20 bit VPN) = 2^20 PTEs.  
+	b) 512MB/4KB = 2^17 =  131072 PTEs.
+	
+3.
+	a) 2*200 = 400 nanoseconds.
+	b) .75(200)+.25(400) = 250 nanosecond average page lookup time.
+
+4.
+	a) Yes, if it page faults there must be a lookup of disc data, so it will do some IO and go into the blocked state.
+	b) No. Just because it couldn't find a memory reference in the TLB doesn't mean it will have to do any IO, so it won't go into the blocked state. Instead it will just have to do a relatively slow memory lookup (that still isn't as time consuming as IO).
+	c) No. This is basically a normal memory lookup as above, so it shouldn't take a state change.
+
+5.
+	The Copy On Write feature is a means of only creating new copies of data for a child process that the child process actually modifies. Basically as long as a page is just being read by a process that should not modify that page there is no need to copy the whole page. Once the foriegner tries to modify this page, however, a copy is created that can be safely used without ruining the original.
+	This feature is useful if you want to fork() and create a child, but you don't want to copy all of the unnecessary memory that is just going to get wiped if the child does an exec(). Instead you just let the child read the information it needs from the parent, then kill itself appropriately.
+	To make this possible you need some free memory pages that are wiped clean and can be copied to for individual copy-on-write page situations. So you probably need some hardware that maintains this pool and wipes them clean before use.
+
+6.
+	200ns <= .7((1-p)*100ns + p*20ms) + .3((1-p)*100ns + p*8ms)
+	--> 200<=(1-p)*100ns + p*(.7*20*10^6ns +.3*8*10^6 ns)
+	--> p <= 6.098*10^-6
+
+7.
+	effective access time = (.8)*(1micro) + .2[(1-.1)*2micro + (.1)*(20*10^3)micro] = 401.16 micro
+	Note: this assumes that the page fault time is 20ms, i.e. that it is only the access and 
+		transer time while lookup time is irrelevent. Adding a few microseconds to the page
+		fault time wouldn't change the answer much anyway.
+
+

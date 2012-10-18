@@ -1,0 +1,5 @@
+1.
+	a)2^5 for virtual page number, and 2^10 for page offset values  = 15 bits for logical addr
+	b)2^14 words in physical memory, so you need a phys addr of 14 bits
+
+  
