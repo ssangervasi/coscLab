@@ -1,0 +1,51 @@
+Sebastian Sangervasi
+
+Question
+
+1.
+	a) 1044 cylinders * 255 heads * 63 sectors * 512 bytes = 8,450,887,680 bytes
+	b) 10 ms (=seek+rotation delay) + 1.627*10^-6 s (read time = (512/(300 * 2^20)) seconds) 
+		= 10.0016ms
+	c) (512b*(1mb/2^20b))/(.0100016 seconds) = .04882 megabytes per second
+	d) 10 ms + (512*10240/(300 * 2^20)) seconds) = 10ms + 0.016666sec
+		= 26.666 ms
+	e)(512b*(10240)*(1b/2^20mb))/(.0266666 seconds) = 187.5 mb/s
+
+4.
+Doing strace:
+
+	For both, it first runs an execve() call that gets the program running 
+as a process. Then it establishes some basic information for the process--
+the username,the brk() calls to determine where the data begins and ends.
+Then it establishes the main (and only thread) space and uses brk() calls 
+for where the thread gets data. All through this we get to see the return
+values of these calls, mostly 0 to show that the call was a success, but
+the brk() calls return memory locations.
+
+	For mytouch(), once the main thread is running (through code) the next
+strace inormation we get is the creat() call, with the relevent parameters,
+which makes sense as this is the next and only system call that happens
+in the mytouch () executable.
+
+	For myls() we get a lot more complicated information, which makes sense
+because this program does more system calls and uses more abstract types
+such as DIR. The open() call comes first, paired with a call to get 
+file descriptor, followed by a series of calls that are used to make 
+readdir() happen. Interestingly, this includes an fstat64 call, which must
+happen because it wants to check if the directory is there. After this
+setup has happened there are a lot of write calls which just do the printf()
+shinanigans. Also, when there are files to deal with the stat64() call happens
+which must be what is used to get our stat info that is used to determine
+file size. The last thing that happens is another getdents() that must use
+parameters that close the directory.
+
+	Both of these processes conclude with close(3) and exit_group(0) that 
+must just cleanly end the process.
+
+
+
+	
+		
+	
+	
+
